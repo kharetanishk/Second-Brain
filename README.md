@@ -15,3 +15,12 @@ so the solution of that is
 Always install dependencies like this 
 
 npm install  @types/jsonwebtoken 
+
+
+insert the following scripts in your package.json 
+
+"scripts":{
+"build":"tsc -b",
+"start":"node dist/index.js",
+"dev":"npm run build && npm run start"
+}
