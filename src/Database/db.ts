@@ -13,14 +13,22 @@ export async function connectDB() {
 }
 
 interface UserType {
-  name: string;
+  username: string;
   email: string;
-  password: string;
+  password?: string;
+  googleId?: string;
+  avatar?: string;
 }
-const UserSchema = new Schema<UserType>({
-  name: { type: String, required: true },
-  email: { type: String, unique: true, required: true },
-  password: { type: String, required: true },
-});
+
+const UserSchema = new Schema<UserType>(
+  {
+    username: { type: String, required: true, unique: true },
+    email: { type: String, unique: true, required: true },
+    password: { type: String },
+    googleId: { type: String },
+    avatar: { type: String },
+  },
+  { timestamps: true }
+);
 
 export const UserModel = model<UserType>("User", UserSchema);
