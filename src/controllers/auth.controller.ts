@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { UserModel } from "../Database/db";
+import { UserModel } from "../models/Usermodel";
 import bcrypt from "bcrypt";
 import { loginSchema, signupSchema } from "../validations/auth.validation";
 

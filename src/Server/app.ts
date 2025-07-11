@@ -4,7 +4,9 @@ import express from "express";
 import { connectDB } from "../Database/db";
 import cookieParser from "cookie-parser";
 import authRoutes from "../routes/auth.routes";
-import userRouter from "../routes/user.routes";
+import contentRoutes from "../routes/content.routes";
+import userRoutes from "../routes/user.routes";
+import tagroutes from "../routes/tag.routes";
 
 const app = express();
 const port = 1601;
@@ -14,7 +16,9 @@ app.use(cookieParser());
 
 //Routes
 app.use("/api/auth", authRoutes);
-app.use("/api", userRouter);
+app.use("/api", userRoutes);
+app.use("/api", contentRoutes);
+app.use("/api", tagroutes);
 
 connectDB();
 
