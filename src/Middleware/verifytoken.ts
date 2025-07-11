@@ -3,7 +3,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 
 const jsonKey = process.env.JWT_SECRET as string;
 
-interface AuthReq extends Request {
+export interface AuthReq extends Request {
   userId?: string;
 }
 
