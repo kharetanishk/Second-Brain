@@ -1,6 +1,6 @@
 import { Response } from "express";
-import { contentschema } from "../validations/control.validation";
-import { ContentModel } from "../models/Contentmodel";
+import { contentschema } from "../Validations/control.validation";
+import { ContentModel } from "../Models/Contentmodel";
 import { Types } from "mongoose";
 import { AuthReq } from "../Middleware/verifytoken";
 

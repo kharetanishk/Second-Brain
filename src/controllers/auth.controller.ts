@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { UserModel } from "../models/Usermodel";
+import { UserModel } from "../Models/Usermodel";
 import bcrypt from "bcrypt";
-import { loginSchema, signupSchema } from "../validations/auth.validation";
+import { loginSchema, signupSchema } from "../Validations/auth.validation";
 
 const jsonKey = process.env.JWT_SECRET as string;
 

@@ -1,6 +1,6 @@
 import { Response } from "express";
-import { TagModel } from "../models/Tagmodel";
-import { tagSchema } from "../validations/tag.validation";
+import { TagModel } from "../Models/Tagmodel";
+import { tagSchema } from "../Validations/tag.validation";
 import { AuthReq } from "../Middleware/verifytoken";
 
 export const createTag = async (req: AuthReq, res: Response) => {

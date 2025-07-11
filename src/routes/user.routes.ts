@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyUserMiddleware } from "../Middleware/verifytoken";
-import { getMyUser } from "../controllers/user.controller";
+import { getMyUser } from "../Controllers/user.controller";
 
 const userRoutes = Router();
 

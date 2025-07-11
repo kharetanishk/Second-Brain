@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyUserMiddleware } from "../Middleware/verifytoken";
-import { createTag } from "../controllers/tag.controller";
+import { createTag } from "../Controllers/tag.controller";
 
 const tagroutes = Router();
 
