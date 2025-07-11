@@ -51,3 +51,33 @@ export const getUserContent = async (req: AuthReq, res: Response) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+
+//deleteContent
+export const deleteContent = async (req: AuthReq, res: Response) => {
+  try {
+    const contentID = req.params.id;
+    if (!Types.ObjectId.isValid(contentID)) {
+      return res.status(400).json({ message: "Invalid content ID" });
+    }
+    const content = await ContentModel.findById(contentID);
+
+    if (!content) {
+      return res.status(404).json({ message: "Content not found" });
+    }
+    if (content.userId.toString() !== req.userId) {
+      return res
+        .status(403)
+        .json({ message: "Not authorized to delete this content" });
+    }
+
+    await ContentModel.findByIdAndDelete(contentID);
+
+    return res.status(200).json({
+      message: "Content deleted successfully",
+      deletedContent: content.title,
+    });
+  } catch (error) {
+    console.error("Error deleting content:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
