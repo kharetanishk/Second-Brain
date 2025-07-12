@@ -40,11 +40,10 @@ export const getUserContent = async (req: AuthReq, res: Response) => {
     if (!req.userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    const contents = await ContentModel.findOne({
+    const contents = await ContentModel.find({
       userId: req.userId,
-    })
-      .populate("tags")
-      .sort({ createdAt: -1 });
+    }).populate("tags");
+
     return res.status(200).json({ contents });
   } catch (error) {
     console.error("Error fetching content:", error);
@@ -78,6 +77,51 @@ export const deleteContent = async (req: AuthReq, res: Response) => {
     });
   } catch (error) {
     console.error("Error deleting content:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+//updateContent
+
+export const updateContent = async (req: AuthReq, res: Response) => {
+  try {
+    const contentID = req.params.id;
+    if (!Types.ObjectId.isValid(contentID)) {
+      return res.status(400).json({ message: "Invalid Content ID" });
+    }
+    const content = await ContentModel.findById(contentID);
+    if (!content) {
+      return res.status(400).json({ message: "Invalid Content ID" });
+    }
+    if (content.userId.toString() !== req.userId) {
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to edit this content" });
+    }
+
+    const parseD = contentschema.partial().safeParse(req.body);
+
+    if (!parseD.success) {
+      return res.status(400).json({
+        message: "Invalid input",
+        errors: parseD.error.flatten().fieldErrors,
+      });
+    }
+    const { title, type, link, tags } = parseD.data;
+
+    if (title) content.title = title;
+    if (type) content.type = type;
+    if (link) content.link = link;
+    if (tags) {
+      content.tags = tags.map((tagId) => new Types.ObjectId(tagId));
+    }
+    await content.save();
+    return res.status(200).json({
+      message: "Content updated successfully",
+      content,
+    });
+  } catch (error) {
+    console.error("Error updating content:", error);
     return res.status(500).json({ message: "Server error" });
   }
 };
