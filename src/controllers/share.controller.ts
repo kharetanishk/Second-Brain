@@ -1,11 +1,13 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { AuthReq } from "../Middleware/verifytoken";
 import { LinkModel } from "../Models/Linkmodel";
 import crypto from "crypto";
+import { UserModel } from "../Models/Usermodel";
+import { ContentModel } from "../Models/Contentmodel";
 
-// 7 days in milliseconds
 const EXPIRY_DURATION = 7 * 24 * 60 * 60 * 1000;
 
+//shareBrain
 export const shareBrain = async (req: AuthReq, res: Response) => {
   try {
     const { share } = req.body;
@@ -67,6 +69,54 @@ export const shareBrain = async (req: AuthReq, res: Response) => {
     return res.status(404).json({ message: "No share link found to disable" });
   } catch (error) {
     console.error("Error in shareBrain:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+//getSharedBrain
+export const getSharedBrain = async (req: Request, res: Response) => {
+  try {
+    const { hash } = req.params;
+    const link = await LinkModel.findOne({ hash });
+
+    if (!link) {
+      return res.status(404).json({ message: "Invalid share link" });
+    }
+    // console.log(link);
+
+    if (!link.visibility || new Date() > link.expiresAt) {
+      return res
+        .status(403)
+        .json({ message: "Link is not visible or expired" });
+    }
+
+    const user = await UserModel.findById(link.userId)
+      .select("username")
+      .lean();
+    // console.log(user);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const contents = await ContentModel.find({ userId: link.userId })
+      .populate("tags")
+      .lean();
+    // console.log(contents);
+    if (contents.length === 0) {
+      return res.status(200).json({
+        message: "No content found",
+        username: user.username,
+        contents: [],
+      });
+    }
+
+    return res.status(200).json({
+      username: user.username,
+      contents,
+    });
+  } catch (error) {
+    console.error("Error fetching shared brain:", error);
     return res.status(500).json({ message: "Server error" });
   }
 };
