@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
+import cors from "cors";
 import { connectDB } from "../Database/db";
 import cookieParser from "cookie-parser";
 import authRoutes from "../Routes/auth.routes";
@@ -13,6 +14,12 @@ const app = express();
 const port = 1601;
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // or whatever your frontend port is
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 
 //Routes

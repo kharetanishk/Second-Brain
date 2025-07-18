@@ -33,8 +33,8 @@ export const registerUser = async (
       return res.status(409).json({
         message:
           existingUser.email === email
-            ? "EMAIL ALREADY IN USE"
-            : "USERNAME ALREADY TAKEN",
+            ? "Email already in use"
+            : "Username already taken ",
       });
     }
 
@@ -87,7 +87,7 @@ export const loginUser = async (
     const parse = loginSchema.safeParse(req.body);
     if (!parse.success) {
       return res.status(400).json({
-        message: "INVALID USER INPUTS , SIGN UP AGAIN",
+        message: "Invalid email or password",
         error: parse.error.flatten().fieldErrors,
       });
     }
@@ -103,7 +103,7 @@ export const loginUser = async (
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid password" });
     }
     const token = jwt.sign(
       {
