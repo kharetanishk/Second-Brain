@@ -13,7 +13,7 @@ export const shareBrain = async (req: AuthReq, res: Response) => {
     const { share } = req.body;
 
     if (typeof share !== "boolean") {
-      return res.status(400).json({ message: "Invalid share value" });
+      return res.status(400).json({ message: "Invalid share v alue" });
     }
 
     if (!req.userId) {

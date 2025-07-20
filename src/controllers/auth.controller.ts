@@ -135,3 +135,14 @@ export const loginUser = async (
     return res.status(500).json({ message: "Something went wrong" });
   }
 };
+
+//logout
+export const logoutUser = (req: Request, res: Response): Response => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+  });
+
+  return res.status(200).json({ message: "Logged out successfully" });
+};
