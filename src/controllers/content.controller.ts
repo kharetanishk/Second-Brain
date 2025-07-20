@@ -3,8 +3,9 @@ import { contentschema } from "../Validations/control.validation";
 import { ContentModel } from "../Models/Contentmodel";
 import { Types } from "mongoose";
 import { AuthReq } from "../Middleware/verifytoken";
+import { TagModel } from "../Models/Tagmodel";
 
-//createContent
+// Create Content
 export const createContent = async (req: AuthReq, res: Response) => {
   try {
     const parseD = contentschema.safeParse(req.body);
@@ -16,17 +17,39 @@ export const createContent = async (req: AuthReq, res: Response) => {
       });
     }
 
-    const { title, type, link, tags } = parseD.data;
+    const { title, type, link, tags = [] } = parseD.data;
+
+    const tagIds = [];
+    for (const tagTitle of tags) {
+      const titleLower = tagTitle.toLowerCase().trim();
+
+      let tag = await TagModel.findOne({
+        title: titleLower,
+        userId: req.userId,
+      });
+
+      if (!tag) {
+        tag = await TagModel.create({ title: titleLower, userId: req.userId });
+      }
+
+      tagIds.push(tag._id);
+    }
+
     const newContent = await ContentModel.create({
-      title: title,
-      type: type,
-      link: link,
-      tags: tags?.map((tagId) => new Types.ObjectId(tagId)), //string to objectId
+      title,
+      type,
+      link,
+      tags: tagIds,
       userId: req.userId,
     });
+
+    const populatedContent = await ContentModel.findById(
+      newContent._id
+    ).populate("tags");
+
     return res.status(201).json({
       message: "Content created successfully",
-      content: newContent,
+      content: populatedContent,
     });
   } catch (error) {
     console.error("Error creating content:", error);
@@ -34,15 +57,15 @@ export const createContent = async (req: AuthReq, res: Response) => {
   }
 };
 
-//getUserContent
+// Get All Content for User
 export const getUserContent = async (req: AuthReq, res: Response) => {
   try {
     if (!req.userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    const contents = await ContentModel.find({
-      userId: req.userId,
-    }).populate("tags");
+    const contents = await ContentModel.find({ userId: req.userId }).populate(
+      "tags"
+    );
 
     return res.status(200).json({ contents });
   } catch (error) {
@@ -51,77 +74,44 @@ export const getUserContent = async (req: AuthReq, res: Response) => {
   }
 };
 
-//deleteContent
+// Delete Content and Related Unused Tags
 export const deleteContent = async (req: AuthReq, res: Response) => {
   try {
     const contentID = req.params.id;
     if (!Types.ObjectId.isValid(contentID)) {
       return res.status(400).json({ message: "Invalid content ID" });
     }
-    const content = await ContentModel.findById(contentID);
 
+    const content = await ContentModel.findById(contentID);
     if (!content) {
       return res.status(404).json({ message: "Content not found" });
     }
+
     if (content.userId.toString() !== req.userId) {
       return res
         .status(403)
         .json({ message: "Not authorized to delete this content" });
     }
 
+    const tagIds = content.tags || [];
+
+    // Delete content
     await ContentModel.findByIdAndDelete(contentID);
 
+    // Clean up unused tags
+    for (const tagId of tagIds) {
+      const tagInUse = await ContentModel.exists({ tags: tagId });
+      if (!tagInUse) {
+        await TagModel.findByIdAndDelete(tagId);
+      }
+    }
+
     return res.status(200).json({
-      message: "Content deleted successfully",
+      message: "Content and unused tags deleted successfully",
       deletedContent: content.title,
     });
   } catch (error) {
     console.error("Error deleting content:", error);
-    return res.status(500).json({ message: "Server error" });
-  }
-};
-
-//updateContent
-
-export const updateContent = async (req: AuthReq, res: Response) => {
-  try {
-    const contentID = req.params.id;
-    if (!Types.ObjectId.isValid(contentID)) {
-      return res.status(400).json({ message: "Invalid Content ID" });
-    }
-    const content = await ContentModel.findById(contentID);
-    if (!content) {
-      return res.status(400).json({ message: "Invalid Content ID" });
-    }
-    if (content.userId.toString() !== req.userId) {
-      return res
-        .status(403)
-        .json({ message: "Unauthorized to edit this content" });
-    }
-
-    const parseD = contentschema.partial().safeParse(req.body);
-
-    if (!parseD.success) {
-      return res.status(400).json({
-        message: "Invalid input",
-        errors: parseD.error.flatten().fieldErrors,
-      });
-    }
-    const { title, type, link, tags } = parseD.data;
-
-    if (title) content.title = title;
-    if (type) content.type = type;
-    if (link) content.link = link;
-    if (tags) {
-      content.tags = tags.map((tagId) => new Types.ObjectId(tagId));
-    }
-    await content.save();
-    return res.status(200).json({
-      message: "Content updated successfully",
-      content,
-    });
-  } catch (error) {
-    console.error("Error updating content:", error);
     return res.status(500).json({ message: "Server error" });
   }
 };

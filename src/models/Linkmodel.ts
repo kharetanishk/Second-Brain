@@ -12,16 +12,17 @@ const LinkSchema = new Schema<LinkType>(
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      unique: true,
       required: true,
     },
     hash: { type: String, unique: true, required: true },
     visibility: { type: Boolean, default: true },
-    expiresAt: { type: Date, required: true, index: { expires: 0 } },
+    expiresAt: { type: Date, required: true },
   },
   {
     timestamps: true,
   }
 );
+
+LinkSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 export const LinkModel = model<LinkType>("Link", LinkSchema);

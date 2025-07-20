@@ -1,6 +1,12 @@
 import { Schema, model, Types } from "mongoose";
 
-type ContentTypeEnum = "article" | "image" | "video" | "pdf";
+type ContentTypeEnum =
+  | "youtube"
+  | "twitter"
+  | "article"
+  | "image"
+  | "video"
+  | "pdf";
 
 interface LinktType {
   url: string;
@@ -10,7 +16,7 @@ interface LinktType {
 interface ContentType {
   title: string;
   type: ContentTypeEnum;
-  link?: LinktType;
+  link: LinktType;
   tags?: Types.ObjectId[];
   userId: Types.ObjectId;
 }
@@ -25,7 +31,7 @@ const ContentSchema = new Schema<ContentType>(
     title: { type: String, required: true },
     type: {
       type: String,
-      enum: ["article", "image", "video", "pdf"],
+      enum: ["youtube", "twitter", "article", "image", "video", "pdf"],
       required: true,
     },
     link: { type: LinkSchema },
