@@ -14,7 +14,7 @@ const LinkSchema = new Schema<LinkType>(
       ref: "User",
       required: true,
     },
-    hash: { type: String, unique: true, required: true },
+    // hash: { type: String, unique: true, required: true },
     visibility: { type: Boolean, default: true },
     expiresAt: { type: Date, required: true },
   },

@@ -20,7 +20,7 @@ export const shareBrain = async (req: AuthReq, res: Response) => {
       return res.status(401).json({ message: "Unauthorized: No userId" });
     }
 
-    console.log(`[SHARE BRAIN] userId=${req.userId}, share=${share}`);
+    // console.log(`[SHARE BRAIN] userId=${req.userId}, share=${share}`);
 
     const existingLink = await LinkModel.findOne({ userId: req.userId });
 

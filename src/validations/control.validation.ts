@@ -5,7 +5,7 @@ export const contentschema = z.object({
   type: z.enum(["youtube", "twitter", "article", "image", "video", "pdf"]),
   link: z.object({
     url: z.string().url("Invalid Url"),
-    hash: z.string().optional(),
+    // hash: z.string().optional(),
   }),
   tags: z.array(z.string()).optional(),
 });

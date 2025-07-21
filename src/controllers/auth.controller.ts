@@ -12,7 +12,7 @@ export const registerUser = async (
 ): Promise<Response> => {
   try {
     const parseD = signupSchema.safeParse(req.body);
-    console.log(parseD);
+    // console.log(parseD);
     if (!parseD.success) {
       return res.json({
         message: "INVALID INPUT",
