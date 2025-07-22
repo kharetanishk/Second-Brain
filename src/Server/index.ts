@@ -11,12 +11,12 @@ import tagRoutes from "../Routes/tag.routes";
 import shareRoutes from "../Routes/share.routes";
 
 const app = express();
-const port = 1601;
+const port = 1602;
 
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://secondbrain-v1.netlify.app",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
