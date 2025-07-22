@@ -16,7 +16,7 @@ const port = 1601;
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173", // or whatever your frontend port is
+    origin: "https://secondbrain-v1.netlify.app",
     credentials: true,
   })
 );
