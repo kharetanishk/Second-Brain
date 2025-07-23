@@ -13,7 +13,6 @@ import shareRoutes from "../Routes/share.routes";
 const app = express();
 const port = 1602;
 
-console.log("CORSorigin" + " " + process.env.FRONTEND_URL);
 app.use(express.json());
 app.use(
   cors({
