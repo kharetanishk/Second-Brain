@@ -33,7 +33,7 @@ export const shareBrain = async (req: AuthReq, res: Response) => {
 
         return res.status(200).json({
           message: "Sharing re-enabled",
-          shareLink: `${process.env.FRONTEND_URL}/brain/${existingLink.hash}`,
+          shareLink: `${process.env.CLIENT_URL}/brain/${existingLink.hash}`,
         });
       }
 
