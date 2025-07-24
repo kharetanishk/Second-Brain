@@ -9,6 +9,7 @@ import contentRoutes from "./Routes/content.routes";
 import userRoutes from "./Routes/user.routes";
 import tagRoutes from "./Routes/tag.routes";
 import shareRoutes from "./Routes/share.routes";
+import type {Request, Response} from "express";
 
 const port = 1602;
 const app = express();
@@ -30,6 +31,10 @@ app.use("/api", tagRoutes);
 app.use("/api", shareRoutes);
 
 connectDB();
+
+app.get("/health-check", (req: Request, res:Response) => {
+  res.send("success!")
+})
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`http://localhost:${port}`);
