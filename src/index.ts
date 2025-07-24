@@ -2,24 +2,24 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import cors from "cors";
-import { connectDB } from "../Database/db";
+import { connectDB } from "./Database/db";
 import cookieParser from "cookie-parser";
-import authRoutes from "../Routes/auth.routes";
-import contentRoutes from "../Routes/content.routes";
-import userRoutes from "../Routes/user.routes";
-import tagRoutes from "../Routes/tag.routes";
-import shareRoutes from "../Routes/share.routes";
+import authRoutes from "./Routes/auth.routes";
+import contentRoutes from "./Routes/content.routes";
+import userRoutes from "./Routes/user.routes";
+import tagRoutes from "./Routes/tag.routes";
+import shareRoutes from "./Routes/share.routes";
 
-const app = express();
 const port = 1602;
+const app = express();
 
-app.use(express.json());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: process.env.CLIENT_URL,
     credentials: true,
   })
 );
+app.use(express.json());
 app.use(cookieParser());
 
 //Routes
@@ -31,6 +31,6 @@ app.use("/api", shareRoutes);
 
 connectDB();
 
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`http://localhost:${port}`);
 });
