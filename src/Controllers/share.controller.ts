@@ -55,7 +55,7 @@ export const shareBrain = async (req: AuthReq, res: Response) => {
 
       return res.status(201).json({
         message: "Brain shared successfully",
-        shareLink: `${process.env.FRONTEND_URL}/brain/${hash}`,
+        shareLink: `${process.env.CLIENT_URL}/brain/${hash}`,
       });
     }
 
